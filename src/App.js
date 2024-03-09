@@ -1,46 +1,50 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { Sidebar } from "./component/Sidebar";
-import { Navbar } from "./component/Navbar";
-import { Route, Routes } from "react-router-dom";
-import { Login } from "./component/Login";
-import { UserDashBoard } from "./component/UserDashBoard";
-import { Expenses } from "./component/Expenses";
-import { AddExpense } from "./component/AddExpense";
+import { Route, Routes } from 'react-router-dom';
+import { Login } from './components/Login';
+import { Sidebar } from './components/Sidebar';
+import { UserDashboard } from './components/userComponents/UserDashboard';
+import { AddExpense } from './components/userComponents/AddExpense';
+import { ExpenseList } from './components/userComponents/ExpenseList';
+import { Signup } from './components/Signup';
+import { UpdateExpense } from './components/userComponents/UpdateExpense';
+import { ProtectedRoutes } from './components/hooks/ProtectedRoutes';
+import { AddGoal } from './components/userComponents/AddGoal';
 
 function App() {
-  const path = window.location.pathname;
-  console.log(path);
+
+  const path = document.location.pathname;
+  //console.log('url path=', path);
 
   return (
-    <body>
-      <Routes>
-        <Route path="/" element={<Login />}></Route>
-      </Routes>
-      {path === "/" || path === "/login" || path === "" ? null : (
-        <div className="wrapper">
-          {path === "/" || path === "/login" || path === "" ? null : (
-            <Sidebar />
-          )}
-          <div className="main-panel">
-            {path === "/" || path === "/login" || path === "" ? null : (
-              <Navbar />
-            )}
-            <div className="content">
-              <Routes>
-                <Route
-                  path="/user/dashboard"
-                  element={<UserDashBoard />}
-                ></Route>
-                <Route path="/user/expenses" element={<Expenses />}></Route>
-                <Route path="/expense/form" element={<AddExpense />}></Route>
+    <div>
 
-              </Routes>
-            </div>
+      <div className="wrapper">
+
+        {
+          path === "/" || path === "/signup" || path === "" ? null : <Sidebar />
+        }
+
+        <div className='main-panel'>
+
+          <div className='content'>
+
+            <Routes>
+
+              <Route path='/' element={<Login />}></Route>
+              <Route path='/signup' element={<Signup />}></Route>
+
+              <Route element={<ProtectedRoutes />}>
+                <Route path='/user/dashboard' element={<UserDashboard />}></Route>
+                <Route path='/user/addExpense' element={<AddExpense />}></Route>
+                <Route path='/user/expenseList' element={<ExpenseList />}></Route>
+                <Route path='/user/updateExpense/:id' element={<UpdateExpense />}></Route>
+                <Route path='/user/addGoal' element={<AddGoal/>}></Route>
+              </Route>
+
+            </Routes>
           </div>
         </div>
-      )}
-    </body>
+      </div>
+    </div >
   );
 }
 

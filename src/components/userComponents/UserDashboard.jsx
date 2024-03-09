@@ -1,8 +1,76 @@
-import React from "react";
+import React from 'react'
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export const UserDashBoard = () => {
+export const UserDashboard = () => {
+
+  const [transaction, settransaction] = useState([]);
+  let [income, setincome] = useState(0);
+  let [expense, setexpense] = useState(0);
+
+  useEffect(() => {
+    const id = sessionStorage.getItem("id");
+    getTransactionByUserId(id);
+  }, [])
+
+  useEffect(() => {
+    const totalIncome = transaction.reduce((acc, curr) => {
+      return curr.transactionType.transactionType === "income"
+        ?
+        acc + curr.amount
+        :
+        acc
+    }, 0)
+    setincome(`+${totalIncome}`);
+
+    const totalExpense = transaction.reduce((acc, curr) => {
+      return curr.transactionType.transactionType === "expense"
+        ?
+        acc + curr.amount
+        :
+        acc
+    }, 0)
+    setexpense(`-${totalExpense}`);
+  }, [transaction])
+
+
+  const getTransactionByUserId = async (id) => {
+    try {
+      const data = { userId: id }
+      const res = await axios.post("http://localhost:4000/transaction/getTransactionByUserId", data);
+      //console.log("tr data..",res);
+      settransaction(res.data.data);
+    } catch (err) {
+      console.log('getTransaction error :', err);
+
+    }
+  }
+
   return (
-    <div className="container-fluid">
+    <div className='container-fluid'>
+      <div className='row'>
+        <div className='col-md-3'>
+          <div className='card'>
+            {/* <div className='card-header'>
+              <h4>Income</h4>
+            </div> */}
+            <div className='card-body'>
+              <h4 style={{ margin: "0" }}>Total-Income</h4>
+              <h5 style={{ color: 'green' }}>{income}</h5>
+            </div>
+          </div>
+        </div>
+
+        <div className='col-md-3'>
+          <div className='card'>
+            <div className='card-body'>
+              <h4 style={{ margin: "0" }}>Total-Expense</h4>
+              <h5 style={{ color: 'red' }}>{expense}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="row">
         <div className="col-md-4">
           <div className="card ">
@@ -13,7 +81,7 @@ export const UserDashBoard = () => {
             <div className="card-body ">
               <div id="chartPreferences" className="ct-chart ct-perfect-fourth">
                 <svg
-                  xmlns="http://gionkunz.github.com/chartist-js/ct"
+                  // xmlns:ct="http://gionkunz.github.com/chartist-js/ct"
                   width="100%"
                   height="100%"
                   className="ct-chart-pie"
@@ -21,28 +89,28 @@ export const UserDashBoard = () => {
                 >
                   <g className="ct-series ct-series-c">
                     <path
-                      d="M174,5A117.5,117.5,0,0,0,98.787,32.227L174,122.5Z"
+                      d="M154.5,5A117.5,117.5,0,0,0,79.287,32.227L154.5,122.5Z"
                       className="ct-slice-pie"
-                      ctValue={11}
+                    // ct:value={11}
                     />
                   </g>
                   <g className="ct-series ct-series-b">
                     <path
-                      d="M99.103,31.965A117.5,117.5,0,0,0,152.386,237.995L174,122.5Z"
+                      d="M79.603,31.965A117.5,117.5,0,0,0,132.886,237.995L154.5,122.5Z"
                       className="ct-slice-pie"
-                      ctValue={36}
+                    // ct:value={36}
                     />
                   </g>
                   <g className="ct-series ct-series-a">
                     <path
-                      d="M151.983,237.919A117.5,117.5,0,1,0,174,5L174,122.5Z"
+                      d="M132.483,237.919A117.5,117.5,0,1,0,154.5,5L154.5,122.5Z"
                       className="ct-slice-pie"
-                      ctValue={53}
+                    // ct:value={53}
                     />
                   </g>
                   <g>
                     <text
-                      dx="232.48926542043094"
+                      dx="212.98926542043094"
                       dy="128.02886340746272"
                       textAnchor="middle"
                       className="ct-label"
@@ -50,7 +118,7 @@ export const UserDashBoard = () => {
                       53%
                     </text>
                     <text
-                      dx="117.09573928369292"
+                      dx="97.59573928369292"
                       dy="137.11053087093524"
                       textAnchor="middle"
                       className="ct-label"
@@ -58,7 +126,7 @@ export const UserDashBoard = () => {
                       36%
                     </text>
                     <text
-                      dx="154.0991471855891"
+                      dx="134.5991471855891"
                       dy="67.22325482393927"
                       textAnchor="middle"
                       className="ct-label"
@@ -89,7 +157,7 @@ export const UserDashBoard = () => {
             <div className="card-body ">
               <div id="chartHours" className="ct-chart">
                 <svg
-                  xmlns="http://gionkunz.github.com/chartist-js/ct"
+                  // xmlns:ct="http://gionkunz.github.com/chartist-js/ct"
                   width="100%"
                   height="245px"
                   className="ct-chart-line"
@@ -100,86 +168,86 @@ export const UserDashBoard = () => {
                       y1={210}
                       y2={210}
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1="185.625"
                       y2="185.625"
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1="161.25"
                       y2="161.25"
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1="136.875"
                       y2="136.875"
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1="112.5"
                       y2="112.5"
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1="88.125"
                       y2="88.125"
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1="63.75"
                       y2="63.75"
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1="39.375"
                       y2="39.375"
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                     <line
                       y1={15}
                       y2={15}
                       x1={50}
-                      x2={743}
+                      x2={664}
                       className="ct-grid ct-vertical"
                     />
                   </g>
                   <g>
                     <g className="ct-series ct-series-a">
                       <path
-                        d="M50,210L50,140.044C78.875,140.044,107.75,116.156,136.625,116.156C165.5,116.156,194.375,90.563,223.25,90.563C252.125,90.563,281,90.075,309.875,90.075C338.75,90.075,367.625,74.963,396.5,74.963C425.375,74.963,454.25,67.163,483.125,67.163C512,67.163,540.875,39.863,569.75,39.863C598.625,39.863,627.5,40.594,656.375,40.594C685.25,40.594,714.125,26.7,743,26.7C771.875,26.7,800.75,17.925,829.625,17.925C858.5,17.925,887.375,3.787,916.25,3.787C945.125,3.787,974,-20.1,1002.875,-20.1L1002.875,210Z"
+                        d="M50,210L50,140.044C75.583,140.044,101.167,116.156,126.75,116.156C152.333,116.156,177.917,90.563,203.5,90.563C229.083,90.563,254.667,90.075,280.25,90.075C305.833,90.075,331.417,74.963,357,74.963C382.583,74.963,408.167,67.163,433.75,67.163C459.333,67.163,484.917,39.863,510.5,39.863C536.083,39.863,561.667,40.594,587.25,40.594C612.833,40.594,638.417,26.7,664,26.7C689.583,26.7,715.167,17.925,740.75,17.925C766.333,17.925,791.917,3.787,817.5,3.787C843.083,3.787,868.667,-20.1,894.25,-20.1L894.25,210Z"
                         className="ct-area"
-                        ctValues="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+                      // ct:values="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
                       />
                     </g>
                     <g className="ct-series ct-series-b">
                       <path
-                        d="M50,210L50,193.669C78.875,193.669,107.75,172.95,136.625,172.95C165.5,172.95,194.375,175.144,223.25,175.144C252.125,175.144,281,151.5,309.875,151.5C338.75,151.5,367.625,140.044,396.5,140.044C425.375,140.044,454.25,128.344,483.125,128.344C512,128.344,540.875,103.969,569.75,103.969C598.625,103.969,627.5,103.481,656.375,103.481C685.25,103.481,714.125,78.619,743,78.619C771.875,78.619,800.75,77.887,829.625,77.887C858.5,77.887,887.375,77.4,916.25,77.4C945.125,77.4,974,52.294,1002.875,52.294L1002.875,210Z"
+                        d="M50,210L50,193.669C75.583,193.669,101.167,172.95,126.75,172.95C152.333,172.95,177.917,175.144,203.5,175.144C229.083,175.144,254.667,151.5,280.25,151.5C305.833,151.5,331.417,140.044,357,140.044C382.583,140.044,408.167,128.344,433.75,128.344C459.333,128.344,484.917,103.969,510.5,103.969C536.083,103.969,561.667,103.481,587.25,103.481C612.833,103.481,638.417,78.619,664,78.619C689.583,78.619,715.167,77.887,740.75,77.887C766.333,77.887,791.917,77.4,817.5,77.4C843.083,77.4,868.667,52.294,894.25,52.294L894.25,210Z"
                         className="ct-area"
-                        ctValues="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+                      // ct:values="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
                       />
                     </g>
                     <g className="ct-series ct-series-c">
                       <path
-                        d="M50,210L50,204.394C78.875,204.394,107.75,182.456,136.625,182.456C165.5,182.456,194.375,193.669,223.25,193.669C252.125,193.669,281,183.675,309.875,183.675C338.75,183.675,367.625,163.688,396.5,163.688C425.375,163.688,454.25,151.744,483.125,151.744C512,151.744,540.875,135.169,569.75,135.169C598.625,135.169,627.5,134.925,656.375,134.925C685.25,134.925,714.125,102.994,743,102.994C771.875,102.994,800.75,110.063,829.625,110.063C858.5,110.063,887.375,110.063,916.25,110.063C945.125,110.063,974,85.931,1002.875,85.931L1002.875,210Z"
+                        d="M50,210L50,204.394C75.583,204.394,101.167,182.456,126.75,182.456C152.333,182.456,177.917,193.669,203.5,193.669C229.083,193.669,254.667,183.675,280.25,183.675C305.833,183.675,331.417,163.688,357,163.688C382.583,163.688,408.167,151.744,433.75,151.744C459.333,151.744,484.917,135.169,510.5,135.169C536.083,135.169,561.667,134.925,587.25,134.925C612.833,134.925,638.417,102.994,664,102.994C689.583,102.994,715.167,110.063,740.75,110.063C766.333,110.063,791.917,110.063,817.5,110.063C843.083,110.063,868.667,85.931,894.25,85.931L894.25,210Z"
                         className="ct-area"
-                        ctValues="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+                      // ct:values="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
                       />
                     </g>
                   </g>
@@ -188,118 +256,118 @@ export const UserDashBoard = () => {
                       style={{ overflow: "visible" }}
                       x={50}
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         9:00AM
                       </span>
                     </foreignObject>
                     <foreignObject
                       style={{ overflow: "visible" }}
-                      x="136.625"
+                      x="126.75"
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         12:00AM
                       </span>
                     </foreignObject>
                     <foreignObject
                       style={{ overflow: "visible" }}
-                      x="223.25"
+                      x="203.5"
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         3:00PM
                       </span>
                     </foreignObject>
                     <foreignObject
                       style={{ overflow: "visible" }}
-                      x="309.875"
+                      x="280.25"
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         6:00PM
                       </span>
                     </foreignObject>
                     <foreignObject
                       style={{ overflow: "visible" }}
-                      x="396.5"
+                      x={357}
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         9:00PM
                       </span>
                     </foreignObject>
                     <foreignObject
                       style={{ overflow: "visible" }}
-                      x="483.125"
+                      x="433.75"
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         12:00PM
                       </span>
                     </foreignObject>
                     <foreignObject
                       style={{ overflow: "visible" }}
-                      x="569.75"
+                      x="510.5"
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         3:00AM
                       </span>
                     </foreignObject>
                     <foreignObject
                       style={{ overflow: "visible" }}
-                      x="656.375"
+                      x="587.25"
                       y={215}
-                      width="86.625"
+                      width="76.75"
                       height={20}
                     >
                       <span
                         className="ct-label ct-horizontal ct-end"
-                        style={{ width: 87, height: 20 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{ width: 77, height: 20 }}
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         6:00AM
                       </span>
@@ -314,7 +382,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         0
                       </span>
@@ -329,7 +397,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         100
                       </span>
@@ -344,7 +412,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         200
                       </span>
@@ -359,7 +427,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         300
                       </span>
@@ -374,7 +442,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         400
                       </span>
@@ -389,7 +457,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         500
                       </span>
@@ -404,7 +472,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         600
                       </span>
@@ -419,7 +487,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 24, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         700
                       </span>
@@ -434,7 +502,7 @@ export const UserDashBoard = () => {
                       <span
                         className="ct-label ct-vertical ct-start"
                         style={{ height: 30, width: 30 }}
-                        xmlns="http://www.w3.org/1999/xhtml"
+                      // xmlns="http://www.w3.org/1999/xhtml"
                       >
                         800
                       </span>
@@ -457,6 +525,7 @@ export const UserDashBoard = () => {
           </div>
         </div>
       </div>
+
     </div>
-  );
-};
+  )
+}
